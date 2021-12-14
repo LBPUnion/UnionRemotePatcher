@@ -1,0 +1,3 @@
+[submodule "UnionPatcher"]
+	path = UnionPatcher
+	url = https://github.com/LBPUnion/UnionPatcher

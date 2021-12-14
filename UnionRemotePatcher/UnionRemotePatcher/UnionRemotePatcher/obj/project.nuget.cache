@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "aUHVYwJUPd3Ft9UHzDh7IEIkOgv2i3P4Mt2GokjC8lT/MPsTbhOAblAkIstJSv3+huLIi5obDQ8LwhSfYwHarg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\logan\\Documents\\GitHub\\UnionRemotePatcher\\UnionRemotePatcher\\UnionRemotePatcher\\UnionRemotePatcher\\UnionRemotePatcher.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\logan\\.nuget\\packages\\eto.forms\\2.6.0\\eto.forms.2.6.0.nupkg.sha512",
+    "C:\\Users\\logan\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

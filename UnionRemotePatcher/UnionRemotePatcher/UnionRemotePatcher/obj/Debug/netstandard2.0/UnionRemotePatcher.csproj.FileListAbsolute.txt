@@ -1,0 +1,10 @@
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\bin\Debug\netstandard2.0\UnionRemotePatcher.deps.json
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\bin\Debug\netstandard2.0\UnionRemotePatcher.dll
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\bin\Debug\netstandard2.0\UnionRemotePatcher.pdb
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\obj\Debug\netstandard2.0\UnionRemotePatcher.csproj.AssemblyReference.cache
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\obj\Debug\netstandard2.0\UnionRemotePatcher.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\obj\Debug\netstandard2.0\UnionRemotePatcher.AssemblyInfoInputs.cache
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\obj\Debug\netstandard2.0\UnionRemotePatcher.AssemblyInfo.cs
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\obj\Debug\netstandard2.0\UnionRemotePatcher.csproj.CoreCompileInputs.cache
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\obj\Debug\netstandard2.0\UnionRemotePatcher.dll
+C:\Users\logan\Documents\GitHub\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\UnionRemotePatcher\obj\Debug\netstandard2.0\UnionRemotePatcher.pdb
