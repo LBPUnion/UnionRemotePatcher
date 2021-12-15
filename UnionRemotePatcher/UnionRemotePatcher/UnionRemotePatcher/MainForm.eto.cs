@@ -115,8 +115,8 @@ namespace UnionRemotePatcher
         }
         void InitializeComponent()
         {
-            Title = "UnionRemotePatcher - LittleBigPlanet Remote EBOOT Patcher";
-            MinimumSize = new Size(400, 200);
+            Title = "UnionRemotePatcher - LBP EBOOT Patcher";
+            MinimumSize = new Size(450, 200);
             Padding = 10;
 
             Content = new TableLayout
