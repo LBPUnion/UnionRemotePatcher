@@ -84,12 +84,10 @@ namespace UnionRemotePatcher
 
                 try
                 {
-                    //Patcher.PatchFile(this.filePicker.FilePath, this.serverUrl.Text, this.outputFileName.FilePath);
-                    RemotePatch.EBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text);
-                    //ps3mapi.ConnectTarget(ps3LocalIP.Text);
-                    //ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Triple);
-                    //Console.WriteLine(PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS());
-            
+                    ps3mapi.ConnectTarget(ps3LocalIP.Text);
+                    ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Triple);
+                    ps3mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
+                    RemotePatch.EBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS(), "anonymous", "");
 
                 }
                 catch (Exception e)
