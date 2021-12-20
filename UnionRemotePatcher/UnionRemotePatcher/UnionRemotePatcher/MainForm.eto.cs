@@ -84,7 +84,7 @@ namespace UnionRemotePatcher
 
                 try
                 {
-                    Patcher.PatchFile(this.filePicker.FilePath, this.serverUrl.Text, this.outputFileName.FilePath);
+                    //Patcher.PatchFile(this.filePicker.FilePath, this.serverUrl.Text, this.outputFileName.FilePath);
                     RemotePatch.EBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text);
                     //ps3mapi.ConnectTarget(ps3LocalIP.Text);
                     //ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Triple);
