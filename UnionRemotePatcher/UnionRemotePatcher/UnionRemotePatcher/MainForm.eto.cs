@@ -3,6 +3,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using System;
 using System.Diagnostics;
+using PS3MAPI_NCAPI;
 
 namespace UnionRemotePatcher
 {
@@ -11,6 +12,9 @@ namespace UnionRemotePatcher
         private TextBox ps3LocalIP;
         private TextBox lbpGameID;
         private TextBox serverUrl;
+
+        public PS3MAPI ps3mapi = new PS3MAPI();
+
         public Dialog CreateOkDialog(string title, string errorMessage)
         {
             DynamicLayout layout = new();
@@ -80,8 +84,13 @@ namespace UnionRemotePatcher
 
                 try
                 {
-                    //Patcher.PatchFile(this.filePicker.FilePath, this.serverUrl.Text, this.outputFileName.FilePath);
+                    Patcher.PatchFile(this.filePicker.FilePath, this.serverUrl.Text, this.outputFileName.FilePath);
                     RemotePatch.EBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text);
+                    //ps3mapi.ConnectTarget(ps3LocalIP.Text);
+                    //ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Triple);
+                    //Console.WriteLine(PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS());
+            
+
                 }
                 catch (Exception e)
                 {

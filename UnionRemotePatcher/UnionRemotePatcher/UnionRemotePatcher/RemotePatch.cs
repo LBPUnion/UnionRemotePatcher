@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LBPUnion.UnionPatcher;
 using System.IO;
 using System.IO.Compression;
@@ -33,65 +29,10 @@ namespace UnionRemotePatcher
             }
         }
 
-        private static bool FTPFileExists(string url, string user, string pass)
-        {
-            // Get the object used to communicate with the server.
-            FtpWebRequest chRequest = (FtpWebRequest)WebRequest.Create(url);
-            chRequest.Credentials = new NetworkCredential(user, pass);
-            chRequest.Method = WebRequestMethods.Ftp.GetDateTimestamp;
-
-            // Let's see if a backup already exists
-            try
-            {
-                FtpWebResponse chResponse = (FtpWebResponse)chRequest.GetResponse();
-            }
-            catch (WebException ex)
-            {
-                FtpWebResponse chResponse = (FtpWebResponse)ex.Response;
-                if (chResponse.StatusCode ==
-                    FtpStatusCode.ActionNotTakenFileUnavailable)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private static void FTPUpload(string source, string destination, string user, string pass)
-        {
-            FtpWebRequest ulRequest = (FtpWebRequest)WebRequest.Create(destination);
-            ulRequest.Credentials = new NetworkCredential(user, pass);
-            ulRequest.Method = WebRequestMethods.Ftp.UploadFile;
-
-            byte[] fileContents = File.ReadAllBytes(source);
-
-            ulRequest.ContentLength = fileContents.Length;
-
-            using (Stream requestStream = ulRequest.GetRequestStream())
-            {
-                requestStream.Write(fileContents, 0, fileContents.Length);
-            }
-        }
-
-        private static void FTPDownload(string source, string destination, string user, string pass)
-        {
-            FtpWebRequest dlRequest = (FtpWebRequest)WebRequest.Create(source);
-            dlRequest.Credentials = new NetworkCredential(user, pass);
-            dlRequest.Method = WebRequestMethods.Ftp.DownloadFile;
-
-            FtpWebResponse dlResponse = (FtpWebResponse)dlRequest.GetResponse();
-
-            Stream responseStream = dlResponse.GetResponseStream();
-
-            using (Stream s = File.Create(destination))
-            {
-                responseStream.CopyTo(s);
-            }
-        }
-
         public static void EBOOTRemotePatch(string ps3ip, string gameID, string serverURL)
         {
+            string rapFile = "";
+
             // Create simple directory structure
             Directory.CreateDirectory(@"Files");
             Directory.CreateDirectory(@$"Files/{gameID}");
@@ -121,12 +62,22 @@ namespace UnionRemotePatcher
             }
 
             // Now that we know TrueAncestor has been downloaded, let's grab and backup our EBOOT
-            FTPDownload($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", @$"Files/{gameID}/EBOOT.BIN.BAK", "anonymous", "");
+            FTP.FTPDownload($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", @$"Files/{gameID}/EBOOT.BIN.BAK", "anonymous", "");
 
             // Now we'll check and see if a backup exists on the server or not, if we don't have one on the server, then upload one
-            if (!FTPFileExists($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", "anonymous", ""))
+            if (!FTP.FTPFileExists($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", "anonymous", ""))
             {
-                FTPUpload(@$"Files/{gameID}/EBOOT.BIN.BAK", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", "anonymous", "");
+                FTP.FTPUpload(@$"Files/{gameID}/EBOOT.BIN.BAK", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", "anonymous", "");
+            }
+
+            // Check exdata folder for files & see if we find a RAP file with 
+            foreach (string fileName in FTP.FTPListDirectory($"ftp://{ps3ip}/dev_hdd0/exdata/", "anonymous", ""))
+            {
+                if (fileName.Contains(gameID))
+                {
+                    rapFile = fileName;
+                    FTP.FTPDownload($"ftp://{ps3ip}/dev_hdd0/exdata/{fileName}", @$"Files/{gameID}/{fileName}", "anonymous", "");
+                }
             }
 
             // Finally, let's decrypt the EBOOT.BIN
@@ -145,7 +96,7 @@ namespace UnionRemotePatcher
 
             // and let's upload it to the PS3!!!
             // wait... that... worked??!?!?
-            FTPUpload(@$"Files/{gameID}/Patched/EBOOT.BIN", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", "anonymous", "");
+            FTP.FTPUpload(@$"Files/{gameID}/Patched/EBOOT.BIN", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", "anonymous", "");
         }
     }
 }
