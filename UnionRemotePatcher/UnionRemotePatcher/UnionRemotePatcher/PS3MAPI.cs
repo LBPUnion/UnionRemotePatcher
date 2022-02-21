@@ -34,7 +34,7 @@ namespace PS3MAPI_NCAPI
             Process = new PROCESS_CMD();
         }
 
-        #region PS3MAPI_CLient
+        #region PS3MAPI_Client
 
         /// <summary>Get PS3 Manager PC Lib Version.</summary>
         public string GetLibVersion_Str()
