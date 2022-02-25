@@ -8,7 +8,7 @@ namespace UnionRemotePatcher.Helpers
 {
     public static class IDPSHelper
     {
-                public static byte[] StringToByteArrayFastest(string hex)
+        public static byte[] StringToByteArrayFastest(string hex)
         {
             if (hex.Length % 2 == 1)
                 throw new Exception("The binary key cannot have an odd number of digits");

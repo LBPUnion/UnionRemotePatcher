@@ -8,6 +8,7 @@ namespace UnionRemotePatcher
 	{
 		public ListBox AccountsList = new ListBox();
 		public string GameID = "";
+		public string SelectedUserID = "";
 
 		public UserSelection(string[] items, string gameID)
 		{

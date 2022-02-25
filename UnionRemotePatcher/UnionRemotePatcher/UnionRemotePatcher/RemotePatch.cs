@@ -9,11 +9,14 @@ using UnionRemotePatcher.Helpers;
 using System.Collections.Generic;
 using Eto.Forms;
 using System.Linq;
+using PS3MAPI_NCAPI;
 
 namespace UnionRemotePatcher
 {
     public class RemotePatch
     {
+        public PS3MAPI ps3mapi = new PS3MAPI();
+
         private static Dictionary<string, string> GetUsers(string ps3_ip, string user, string pass)
         {
             Dictionary<string, string> users = new Dictionary<string, string>();
@@ -48,9 +51,17 @@ namespace UnionRemotePatcher
             }
         }
 
-        public static void EBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string idps, string user, string pass)
+        public void EBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string user, string pass)
         {
+            PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS();
+
+            ps3mapi.ConnectTarget(serverURL);
+            ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
+            ps3mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
+
             Dictionary<string, string> users = GetUsers(ps3ip, "", "");
+
+
             // Create simple directory structure
             //Directory.CreateDirectory(@"Files");
             //Directory.CreateDirectory(@$"Files/{gameID}");
