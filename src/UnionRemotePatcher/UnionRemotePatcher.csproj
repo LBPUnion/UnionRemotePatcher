@@ -13,13 +13,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="openscetool\linux64\oscetool">
+    <None Update="scetool\linux64\oscetool">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="openscetool\win64\oscetool.exe">
+    <None Update="scetool\linux64\scetool">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="openscetool\win64\zlib1.dll">
+    <None Update="scetool\win64\oscetool.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="scetool\win64\scetool.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="scetool\win64\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="zlib1.dll">

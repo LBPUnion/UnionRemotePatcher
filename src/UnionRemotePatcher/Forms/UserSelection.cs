@@ -40,7 +40,7 @@ namespace UnionRemotePatcher
 			{
 				Items =
 				{
-					$"UnionRemotePatcher needs to know which Local User\non your PS3 owns the PSN license for {GameID}.\n\nPlease select the appropriate user, or, if this is a disc\ncopy of LittleBigPlanet, select 'Disc License'.",
+					$"UnionRemotePatcher needs to know which Local User\non your PS3 owns the PSN license for {GameID}.\n\nPlease select the name of the user that purchased the content and press Continue.",
 					// add more controls here
 					new StackLayoutItem(new Panel() { Size = new Size(0, 10)}),
 					new StackLayoutItem(AccountsList),

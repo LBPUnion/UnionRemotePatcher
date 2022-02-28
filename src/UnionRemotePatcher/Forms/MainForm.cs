@@ -62,12 +62,13 @@ namespace UnionRemotePatcher
             return dialog;
         }
 
-        public Control CreatePatchButton(int tabIndex = 0)
+        public Control CreatePSNPatchButton(int tabIndex = 0)
         {
             Button control = new()
             {
-                Text = "Patch!",
+                Text = "Patch Digital Copy!",
                 TabIndex = tabIndex,
+                Width = 200,
             };
 
             control.Click += delegate {
@@ -91,7 +92,51 @@ namespace UnionRemotePatcher
 
                 try
                 {
-                    RemotePatcher.EBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, "anonymous", "");
+                    RemotePatcher.PSNEBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, "anonymous", "");
+                }
+                catch (Exception e)
+                {
+                    this.CreateOkDialog("Error occurred while patching", "An error occured while patching:\n" + e).ShowModal();
+                    return;
+                }
+
+                this.CreateOkDialog("Success!", $"The Server URL for {this.lbpGameID.Text} on the PS3 at {this.ps3LocalIP.Text} has been patched to {this.serverUrl.Text}").ShowModal();
+            };
+
+            return control;
+        }
+
+        public Control CreateDiscPatchButton(int tabIndex = 0)
+        {
+            Button control = new()
+            {
+                Text = "Patch Disc Copy!",
+                TabIndex = tabIndex,
+                Width = 200,
+            };
+
+            control.Click += delegate {
+                if (string.IsNullOrEmpty(this.ps3LocalIP.Text))
+                {
+                    this.CreateOkDialog("Form Error", "No PS3 IP address specified!").ShowModal();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(this.lbpGameID.Text))
+                {
+                    this.CreateOkDialog("Form Error", "No game ID specified!").ShowModal();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(this.serverUrl.Text))
+                {
+                    this.CreateOkDialog("Form Error", "No server URL specified!").ShowModal();
+                    return;
+                }
+
+                try
+                {
+                    RemotePatcher.DiscEBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, "anonymous", "");
                 }
                 catch (Exception e)
                 {
@@ -127,6 +172,7 @@ namespace UnionRemotePatcher
         {
             Title = "UnionRemotePatcher - LBP EBOOT Patcher";
             MinimumSize = new Size(450, 200);
+            Resizable = false;
             Padding = 10;
 
             Content = new TableLayout
@@ -148,10 +194,11 @@ namespace UnionRemotePatcher
                     ),
                     new TableRow(
                         new TableCell(this.CreateHelpButton(3)),
-                        new TableCell(this.CreatePatchButton(4))
+                        new TableRow(
+                            //new TableCell(this.CreatePSNPatchButton(4)),
+                            new TableCell(this.CreateDiscPatchButton(5)))
                     ),
                 },
-
             };
         }
     }
