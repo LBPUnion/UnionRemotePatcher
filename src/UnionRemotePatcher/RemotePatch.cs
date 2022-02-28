@@ -55,13 +55,13 @@ namespace UnionRemotePatcher
 
         public void EBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string user, string pass)
         {
-            PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS();
+            //PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS();
 
-            ps3mapi.ConnectTarget(serverURL);
-            ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
-            ps3mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
+            //ps3mapi.ConnectTarget(serverURL);
+            //ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
+            //ps3mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
 
-            Dictionary<string, string> users = GetUsers(ps3ip, "", "");
+            //Dictionary<string, string> users = GetUsers(ps3ip, "", "");
 
             OSCEToolWrapper.OSCETool(@"-d C:\Users\Logan\Desktop\EBOOT.BIN C:\Users\Logan\Desktop\EBOOT.ELF");
 

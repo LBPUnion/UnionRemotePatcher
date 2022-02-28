@@ -9,7 +9,7 @@ namespace UnionRemotePatcher.Helpers
 {
     public static class OSCEToolWrapper
     {
-        [DllImport("oscetool/win64/oscetool.dll")]
+        [DllImport("oscetool")]
         private static extern void main(int argc, string[] argv);
 
         public static void OSCETool(string args)
