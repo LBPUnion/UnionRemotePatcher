@@ -18,20 +18,21 @@ namespace UnionRemotePatcher.Helpers
 
             try
             {
-                Console.WriteLine($"FTP: Checking if file {url} exists");
+                Console.Write($"FTP: Checking if file {url} exists... ");
 
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
             }
             catch (WebException ex)
             {
                 FtpWebResponse response = (FtpWebResponse)ex.Response;
-                if (response.StatusCode ==
-                    FtpStatusCode.ActionNotTakenFileUnavailable)
+                if (response.StatusCode == FtpStatusCode.ActionNotTakenFileUnavailable)
                 {
+                    Console.WriteLine("No");
                     return false;
                 }
             }
 
+            Console.WriteLine("Yes");
             return true;
         }
 
@@ -139,7 +140,7 @@ namespace UnionRemotePatcher.Helpers
 
             try
             {
-                Console.Write($"\nFTP: Reading file {url} ");
+                Console.WriteLine($"FTP: Reading file {url}");
 
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 
@@ -147,7 +148,6 @@ namespace UnionRemotePatcher.Helpers
 
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
-                    Console.WriteLine($" - File reads: {reader.ReadToEnd()}");
                     return reader.ReadToEnd();
                 }
             }

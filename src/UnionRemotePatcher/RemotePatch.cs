@@ -21,6 +21,8 @@ namespace UnionRemotePatcher
 
         private static Dictionary<string, string> GetUsers(string ps3_ip, string user, string pass)
         {
+            Console.WriteLine("Getting users...");
+
             Dictionary<string, string> users = new Dictionary<string, string>();
 
             string[] userFolders = FTPHelper.FTP_ListDirectory($"ftp://{ps3_ip}/dev_hdd0/home/", user, pass);
@@ -29,10 +31,10 @@ namespace UnionRemotePatcher
 
             for (int i = 0; i < userFolders.Length; i++)
             {
-                Console.WriteLine("User found: " + username + $" <{userFolders[i]}>");
-
                 username = FTPHelper.FTP_ReadFile($"ftp://{ps3_ip}/dev_hdd0/home/{userFolders[i]}/localusername", user, pass);
                 users.Add(username, userFolders[i]);
+
+                Console.WriteLine("User found: " + username + $" <{userFolders[i]}>");
             }
 
             return users;
@@ -83,28 +85,33 @@ namespace UnionRemotePatcher
 
         public void EBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string user, string pass)
         {
+            string idps = "";
+            Dictionary<string, string> users;
+
             ps3mapi.ConnectTarget(ps3ip);
             ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
             ps3mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
 
-            PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS();
-
-            Dictionary<string, string> users = GetUsers(ps3ip, "", "");
-
-            LaunchOSCETool(@"-d C:\Users\Logan\Desktop\EBOOT.BIN C:\Users\Logan\Desktop\EBOOT.ELF");
-
             // Create simple directory structure
-            //Directory.CreateDirectory(@"Files");
-            //Directory.CreateDirectory(@$"Files/{gameID}");
+            Directory.CreateDirectory(@"EBOOT");
+            Directory.CreateDirectory($@"EBOOT/{gameID}");
+            Directory.CreateDirectory($@"EBOOT/{gameID}/Original");
+            Directory.CreateDirectory($@"EBOOT/{gameID}/Patched");
 
             // Let's grab and backup our EBOOT
-            //FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", @$"Files/{gameID}/EBOOT.BIN.BAK", user, pass);
+            FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", @$"EBOOT/{gameID}/Original/EBOOT.BIN", user, pass);
 
             // Now we'll check and see if a backup exists on the server or not, if we don't have one on the server, then upload one
-            //if (!FTPHelper.FTP_CheckFileExists($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", user, pass))
-            //{
-            //    FTPHelper.FTP_Upload(@$"Files/{gameID}/EBOOT.BIN.BAK", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", user, pass);
-            //}
+            if (!FTPHelper.FTP_CheckFileExists($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", user, pass))
+            {
+                FTPHelper.FTP_Upload(@$"EBOOT/{gameID}/Original/EBOOT.BIN", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", user, pass);
+            }
+
+            idps = PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS();
+
+            File.WriteAllBytes(@"data/idps", IDPSHelper.StringToByteArray(idps));
+
+            users = GetUsers(ps3ip, user, pass);
 
             //GetUsers(ps3ip, "", "");
 
