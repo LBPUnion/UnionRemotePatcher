@@ -18,6 +18,8 @@ namespace UnionRemotePatcher.Helpers
 
             try
             {
+                Console.WriteLine($"FTP: Checking if file {url} exists");
+
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
             }
             catch (WebException ex)
@@ -41,6 +43,8 @@ namespace UnionRemotePatcher.Helpers
 
             try
             {
+                Console.WriteLine($"FTP: Listing directory {url}");
+
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 
                 string names = new StreamReader(response.GetResponseStream()).ReadToEnd();
@@ -60,6 +64,13 @@ namespace UnionRemotePatcher.Helpers
                         }
                     }
                 }
+
+                foreach(string dir in dirs.ToArray())
+                {
+                    Console.WriteLine($"/{dir}");
+                }
+
+                Console.WriteLine("");
 
                 return dirs.ToArray();
             }
@@ -81,6 +92,8 @@ namespace UnionRemotePatcher.Helpers
 
             try
             {
+                Console.WriteLine($"FTP: Uploading file {source} to {destination}");
+
                 using (Stream requestStream = request.GetRequestStream())
                 {
                     requestStream.Write(fileContents, 0, fileContents.Length);
@@ -101,6 +114,8 @@ namespace UnionRemotePatcher.Helpers
 
             try
             {
+                Console.WriteLine($"FTP: Downloading file {source} to {destination}");
+
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 
                 Stream responseStream = response.GetResponseStream();
@@ -124,12 +139,15 @@ namespace UnionRemotePatcher.Helpers
 
             try
             {
+                Console.Write($"\nFTP: Reading file {url} ");
+
                 FtpWebResponse response = (FtpWebResponse)request.GetResponse();
 
                 Stream responseStream = response.GetResponseStream();
 
                 using (StreamReader reader = new StreamReader(responseStream))
                 {
+                    Console.WriteLine($" - File reads: {reader.ReadToEnd()}");
                     return reader.ReadToEnd();
                 }
             }

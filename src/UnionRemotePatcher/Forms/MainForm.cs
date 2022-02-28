@@ -12,6 +12,7 @@ namespace UnionRemotePatcher
         public MainForm()
         {
             InitializeComponent();
+            Console.WriteLine("Welcome to UnionRemotePatcher");
         }
 
         public RemotePatch RemotePatcher = new RemotePatch();
@@ -51,6 +52,7 @@ namespace UnionRemotePatcher
                 Content = layout,
                 Padding = new Padding(10, 10, 10, 10),
                 Title = title,
+                
             };
 
             button.Click += delegate {

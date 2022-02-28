@@ -13,10 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="oscetool.so">
+    <None Update="openscetool\linux64\oscetool">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="oscetool.dll">
+    <None Update="openscetool\win64\oscetool.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="openscetool\win64\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="zlib1.dll">

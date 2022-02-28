@@ -11,7 +11,7 @@ using Eto.Forms;
 using System.Linq;
 using PS3MAPI_NCAPI;
 using System.Reflection;
-
+using System.Runtime.InteropServices;
 
 namespace UnionRemotePatcher
 {
@@ -38,32 +38,60 @@ namespace UnionRemotePatcher
             return users;
         }
 
-        private static void LaunchProcess(string fileName, string workingDirectory, string args)
+        public static void LaunchOSCETool(string args)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.CreateNoWindow = false;
-            startInfo.UseShellExecute = true;
-            startInfo.WorkingDirectory = Path.GetFullPath(workingDirectory);
-            startInfo.FileName = Path.GetFullPath(fileName);
-            startInfo.Arguments = args;
+            string platformExecutable = "";
 
-            using (Process exeProcess = Process.Start(startInfo))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                exeProcess.WaitForExit();
+                platformExecutable = "openscetool/win64/oscetool.exe";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                platformExecutable = "openscetool/linux64/oscetool";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                platformExecutable = "";
+            }
+
+            if (platformExecutable != "")
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.UseShellExecute = false;
+                startInfo.FileName = Path.GetFullPath(platformExecutable);
+                startInfo.WorkingDirectory = @"./";
+                startInfo.Arguments = args;
+                startInfo.RedirectStandardOutput = true;
+
+                Console.WriteLine("\n\n===== START OSCETOOL =====\n");
+                using (Process proc = Process.Start(startInfo))
+                {
+                    while (!proc.StandardOutput.EndOfStream)
+                    {
+                        Console.WriteLine(proc.StandardOutput.ReadLine());
+                    }
+                    proc.WaitForExit();
+                }
+                Console.WriteLine("\n===== END OSCETOOL =====\n\n");
+            }
+            else
+            {
+                throw new Exception("Error starting OSCETool. Your platform may not be supported yet.");
             }
         }
 
         public void EBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string user, string pass)
         {
-            //PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS();
+            ps3mapi.ConnectTarget(ps3ip);
+            ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
+            ps3mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
 
-            //ps3mapi.ConnectTarget(serverURL);
-            //ps3mapi.PS3.RingBuzzer(PS3MAPI.PS3_CMD.BuzzerMode.Double);
-            //ps3mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
+            PS3MAPI.PS3MAPI_Client_Server.PS3_GetIDPS();
 
-            //Dictionary<string, string> users = GetUsers(ps3ip, "", "");
+            Dictionary<string, string> users = GetUsers(ps3ip, "", "");
 
-            OSCEToolWrapper.OSCETool(@"-d C:\Users\Logan\Desktop\EBOOT.BIN C:\Users\Logan\Desktop\EBOOT.ELF");
+            LaunchOSCETool(@"-d C:\Users\Logan\Desktop\EBOOT.BIN C:\Users\Logan\Desktop\EBOOT.ELF");
 
             // Create simple directory structure
             //Directory.CreateDirectory(@"Files");
