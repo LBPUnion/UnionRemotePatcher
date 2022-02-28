@@ -12,4 +12,16 @@
     <ProjectReference Include="..\..\UnionPatcher\UnionPatcher\UnionPatcher.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="oscetool\linux64\oscetool">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="oscetool\win64\oscetool.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="oscetool\win64\zlib1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using Eto.Forms;
 using System.Linq;
 using PS3MAPI_NCAPI;
+using System.Reflection;
+
 
 namespace UnionRemotePatcher
 {
@@ -61,6 +63,7 @@ namespace UnionRemotePatcher
 
             Dictionary<string, string> users = GetUsers(ps3ip, "", "");
 
+            OSCEToolWrapper.OSCETool(@"-d C:\Users\Logan\Desktop\EBOOT.BIN C:\Users\Logan\Desktop\EBOOT.ELF");
 
             // Create simple directory structure
             //Directory.CreateDirectory(@"Files");
@@ -77,9 +80,9 @@ namespace UnionRemotePatcher
 
             //GetUsers(ps3ip, "", "");
 
-            UserSelection select = new UserSelection(users.Keys.ToArray(), gameID);
+            //UserSelection select = new UserSelection(users.Keys.ToArray(), gameID);
 
-            select.Show();
+            //select.Show();
 
             // Check if we have a RIF file, if so let's convert that to a RAP so we can decrypt our eboot
             //if (rifFile != "")
