@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\UnionPatcher\UnionPatcher\UnionPatcher.csproj" />
+    <ProjectReference Include="..\..\UnionPatcher\UnionPatcher\UnionPatcher.csproj" />
   </ItemGroup>
 
 </Project>
