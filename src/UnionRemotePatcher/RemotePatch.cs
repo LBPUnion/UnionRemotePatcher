@@ -40,17 +40,17 @@ namespace UnionRemotePatcher
             return users;
         }
 
-        public static void LaunchOSCETool(string args)
+        public static void LaunchSCETool(string args)
         {
             string platformExecutable = "";
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                platformExecutable = "openscetool/win64/oscetool.exe";
+                platformExecutable = "scetool/win64/scetool.exe";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                platformExecutable = "openscetool/linux64/oscetool";
+                platformExecutable = "scetool/linux64/scetool";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
@@ -66,7 +66,7 @@ namespace UnionRemotePatcher
                 startInfo.Arguments = args;
                 startInfo.RedirectStandardOutput = true;
 
-                Console.WriteLine("\n\n===== START OSCETOOL =====\n");
+                Console.WriteLine("\n\n===== START SCETOOL =====\n");
                 using (Process proc = Process.Start(startInfo))
                 {
                     while (!proc.StandardOutput.EndOfStream)
@@ -75,11 +75,11 @@ namespace UnionRemotePatcher
                     }
                     proc.WaitForExit();
                 }
-                Console.WriteLine("\n===== END OSCETOOL =====\n\n");
+                Console.WriteLine("\n===== END SCETOOL =====\n\n");
             }
             else
             {
-                throw new Exception("Error starting OSCETool. Your platform may not be supported yet.");
+                throw new Exception("Error starting SCETool. Your platform may not be supported yet.");
             }
         }
 
