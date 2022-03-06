@@ -141,8 +141,24 @@ public class RemotePatch
         Patcher.PatchFile($"eboot/{gameID}/original/EBOOT.ELF", serverURL, $"eboot/{gameID}/patched/EBOOT.ELF");
 
         // Encrypt the EBOOT
-        // I have absolutely no clue what to put here right now. So it will be this until we figure it out.
-        LaunchSCETool("");
+        LaunchSCETool($"--verbose " +
+                      $"--sce-type=SELF" +
+                      $" --skip-sections=FALSE" +
+                      $" --self-add-shdrs=TRUE" +
+                      $" --compress-data=TRUE" +
+                      $" --key-revision=0A" +
+                      $" --self-app-version=0001000000000000" +
+                      $" --self-auth-id=1010000001000003" +
+                      $" --self-vendor-id=01000002" +
+                      $" --self-ctrl-flags=0000000000000000000000000000000000000000000000000000000000000000" +
+                      $" --self-cap-flags=00000000000000000000000000000000000000000000003B0000000100040000" +
+                      $" --self-type=NPDRM" +
+                      $" --self-fw-version=0003005500000000" +
+                      $" --np-license-type=FREE" +
+                      $" --np-app-type=SPRX" +
+                      $" --np-content-id={contentID}" +
+                      $" --np-real-fname=EBOOT.BIN" +
+                      $" --encrypt eboot/{gameID}/patched/EBOOT.ELF eboot/{gameID}/patched/EBOOT.BIN");
 
         // And upload the encrypted, patched EBOOT to the system.
         FTPHelper.FTP_Upload(@$"eboot/{gameID}/patched/EBOOT.BIN",
