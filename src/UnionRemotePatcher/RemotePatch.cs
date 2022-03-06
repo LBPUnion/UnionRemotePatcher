@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
+using System.Threading;
+using Eto.Forms;
 using LBPUnion.UnionPatcher;
 using PS3MAPI_NCAPI;
 using UnionRemotePatcher.Helpers;
@@ -75,7 +79,10 @@ public class RemotePatch
     
     public void PSNEBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string user, string pass)
     {
+        Console.WriteLine("Detected Digital Copy - Running in Full Mode");
+        
         string idps = "";
+        string contentID = "";
         Dictionary<string, string> users;
 
         _ps3Mapi.ConnectTarget(ps3ip);
@@ -83,7 +90,7 @@ public class RemotePatch
         _ps3Mapi.PS3.Notify("UnionRemotePatcher Connected! Patching...");
 
         // Create simple directory structure
-        Directory.CreateDirectory(@"data/rifs");
+        Directory.CreateDirectory(@"rifs");
         Directory.CreateDirectory(@"eboot");
         Directory.CreateDirectory($@"eboot/{gameID}");
         Directory.CreateDirectory($@"eboot/{gameID}/original");
@@ -103,56 +110,51 @@ public class RemotePatch
 
         File.WriteAllBytes(@"data/idps", IDPSHelper.StringToByteArray(idps));
 
+        // Scan the users on the system
         users = GetUsers(ps3ip, user, pass);
 
-        //GetUsers(ps3ip, "", "");
-
-        //UserSelection select = new UserSelection(users.Values.ToArray(), gameID);
-
-        //select.Show();
-
-        // Not asking for user right now because I'm too tired - just use the first user (me)
-
-        string currentUser = users.Keys.ToArray()[0];
-
-        if (FTPHelper.FTP_CheckFileExists($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata", user, pass))
+        // Scan the system for a license for the game
+        foreach (string currentUser in users.Keys.ToArray())
         {
-            FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/act.dat", @"data/act.dat", user,
-                pass);
+            if (FTPHelper.FTP_CheckFileExists($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata", user, pass))
+            {
+                FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/act.dat", @"data/act.dat",
+                    user,
+                    pass);
 
-            foreach (string fileName in FTPHelper.FTP_ListDirectory(
-                         $"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/", user, pass))
-                if (fileName.Contains(gameID))
-                    FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/{fileName}",
-                        @$"data/rifs/{fileName}", user, pass);
+                foreach (string fileName in FTPHelper.FTP_ListDirectory(
+                             $"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/", user, pass))
+                    if (fileName.Contains(gameID))
+                    {
+                        FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/{fileName}",
+                            @$"rifs/{fileName}", user, pass);
+                        contentID = fileName.Substring(0, fileName.Length - 4);
+                        Console.WriteLine($"Got content ID {contentID}");
+                    }
+            }
         }
 
-        // Check for keys. If we don't have keys, we can't decrypt a PSN copy
-
         // Finally, let's decrypt the EBOOT.BIN
-        LaunchSCETool($" -v -d \"{Path.GetFullPath(@$"eboot/{gameID}/original/EBOOT.BIN")}\" \"{Path.GetFullPath(@$"eboot/{gameID}/patched/EBOOT.ELF")}\"");
+        LaunchSCETool($" -v -d \"{Path.GetFullPath(@$"eboot/{gameID}/original/EBOOT.BIN")}\" \"{Path.GetFullPath(@$"eboot/{gameID}/original/EBOOT.ELF")}\"");
 
-        // Let's make a patched folder for our patched files
-        //Directory.CreateDirectory(@$"Files/{gameID}/Patched/");
+        // Now, patch the EBOOT;
+        Patcher.PatchFile($"eboot/{gameID}/original/EBOOT.ELF", serverURL, $"eboot/{gameID}/patched/EBOOT.ELF");
 
-        // Our files are all in place - now we can actually patch our eboot
-        //Patcher.PatchFile(@$"Files/{gameID}/EBOOT_CLEAN.ELF", serverURL, $@"Files/{gameID}/Patched/EBOOT_PATCHED.ELF");
+        // Encrypt the EBOOT
+        // I have absolutely no clue what to put here right now. So it will be this until we figure it out.
+        LaunchSCETool("");
 
-        // FINALLY we're patched - let's encrypt our patched eboot and send it back over to the PS3
-        // btw this is where shit is gonna get fucked up so hard i NEED to ask for firmware type (CEX/DEX/etc) at UI
-        // TODO: not make patched EBOOTs that are 14mb lmao I need to learn how to use the resigner. This setup worked great for me on CEX EVILNAT 4.88.2 CFW tho
-        //LaunchProcess(@"Files/tools/scetool.exe", @"Files/tools", $" --sce-type=SELF --skip-sections=FALSE --key-revision=0A --self-app-version=0001000000000000 --self-auth-id=1010000001000003 --self-vendor-id=01000002 --self-ctrl-flags=0000000000000000000000000000000000000000000000000000000000000000 --self-cap-flags=00000000000000000000000000000000000000000000003B0000000100040000 --self-type=APP --self-fw-version=0003005500000000 --compress-data true --encrypt \"{Path.GetFullPath(@$"Files/{gameID}/Patched/EBOOT_PATCHED.ELF")}\" \"{Path.GetFullPath(@$"Files/{gameID}/Patched/EBOOT.BIN")}\"");
-
-        // and let's upload it to the PS3!!!
-        // wait... that... worked??!?!?
-        //FTPHelper.FTP_Upload(@$"Files/{gameID}/Patched/EBOOT.BIN", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", user, pass);
+        // And upload the encrypted, patched EBOOT to the system.
+        FTPHelper.FTP_Upload(@$"eboot/{gameID}/patched/EBOOT.BIN",
+            $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", user, pass);
     }
 
     // Cut-down version that only patches disc copies
     public void DiscEBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string user, string pass)
     {
+        Console.WriteLine("Detected Disc Copy - Running in Simplified Mode");
+        
         // Create a simple directory structure
-        Directory.CreateDirectory(@"data");
         Directory.CreateDirectory(@"eboot");
         Directory.CreateDirectory($@"eboot/{gameID}");
         Directory.CreateDirectory($@"eboot/{gameID}/original");
@@ -173,14 +175,14 @@ public class RemotePatch
                 "UnionRemotePatcher cannot find the keys, ldr_curves, or vsh_curves files required to continue. Please make sure you have copies of these files placed in the data directory where you found the executable to run UnionRemotePatcher. Without them, we can't patch your game.");
 
         // Decrypt the EBOOT
-        LaunchSCETool($"-d eboot/{gameID}/original/EBOOT.BIN eboot/{gameID}/original/EBOOT.ELF");
+        LaunchSCETool($"-v -d eboot/{gameID}/original/EBOOT.BIN eboot/{gameID}/original/EBOOT.ELF");
 
         // Now, patch the EBOOT;
         Patcher.PatchFile($"eboot/{gameID}/original/EBOOT.ELF", serverURL, $"eboot/{gameID}/patched/EBOOT.ELF");
 
         // Encrypt the EBOOT
         LaunchSCETool(
-            $" --sce-type=SELF --skip-sections=FALSE --key-revision=0A --self-app-version=0001000000000000 --self-auth-id=1010000001000003 --self-vendor-id=01000002 --self-ctrl-flags=0000000000000000000000000000000000000000000000000000000000000000 --self-cap-flags=00000000000000000000000000000000000000000000003B0000000100040000 --self-type=APP --self-fw-version=0003005500000000 --compress-data true --encrypt \"{Path.GetFullPath(@$"eboot/{gameID}/patched/EBOOT.ELF")}\" \"{Path.GetFullPath(@$"eboot/{gameID}/patched/EBOOT.BIN")}\"");
+            $" -v --sce-type=SELF --skip-sections=FALSE --key-revision=0A --self-app-version=0001000000000000 --self-auth-id=1010000001000003 --self-vendor-id=01000002 --self-ctrl-flags=0000000000000000000000000000000000000000000000000000000000000000 --self-cap-flags=00000000000000000000000000000000000000000000003B0000000100040000 --self-type=APP --self-fw-version=0003005500000000 --compress-data true --encrypt \"{Path.GetFullPath(@$"eboot/{gameID}/patched/EBOOT.ELF")}\" \"{Path.GetFullPath(@$"eboot/{gameID}/patched/EBOOT.BIN")}\"");
 
         // And upload the encrypted, patched EBOOT to the system.
         FTPHelper.FTP_Upload(@$"eboot/{gameID}/patched/EBOOT.BIN",
