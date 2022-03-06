@@ -19,6 +19,8 @@ namespace UnionRemotePatcher
         private TextBox ps3LocalIP;
         private TextBox lbpGameID;
         private TextBox serverUrl;
+        private TextBox ftpUser;
+        private TextBox ftpPass;
 
         public Dialog CreateOkDialog(string title, string errorMessage)
         {
@@ -155,9 +157,17 @@ namespace UnionRemotePatcher
                         new TableCell(this.serverUrl = new TextBox { TabIndex = 2 })
                     ),
                     new TableRow(
-                        new TableCell(this.CreateHelpButton(3)),
+                        new TableCell(new Label { Text = "FTP Username: ", VerticalAlignment = VerticalAlignment.Center }),
+                        new TableCell(this.ftpUser = new TextBox { TabIndex = 3, Text = "anonymous" })
+                    ),
+                    new TableRow(
+                        new TableCell(new Label { Text = "FTP Password: ", VerticalAlignment = VerticalAlignment.Center }),
+                        new TableCell(this.ftpPass = new TextBox { TabIndex = 4 })
+                    ),
+                    new TableRow(
+                        new TableCell(this.CreateHelpButton(6)),
                         new TableRow(
-                            new TableCell(this.CreatePatchButton(4)))
+                            new TableCell(this.CreatePatchButton(5)))
                     ),
                 },
             };
