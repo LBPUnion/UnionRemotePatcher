@@ -3,7 +3,6 @@ using Eto.Forms;
 using System;
 using System.Diagnostics;
 
-
 namespace UnionRemotePatcher
 {
     public partial class MainForm : Form
@@ -90,16 +89,22 @@ namespace UnionRemotePatcher
                     this.CreateOkDialog("Form Error", "No server URL specified!").ShowModal();
                     return;
                 }
+                
+                if (!Uri.TryCreate(this.serverUrl.Text, UriKind.Absolute, out _))
+                {
+                    this.CreateOkDialog("Form Error", "Server URL is invalid! Please enter a valid URL.").ShowModal();
+                    return;
+                }
 
                 try
                 {
                     if (this.lbpGameID.Text.ToUpper().StartsWith('B'))
                     {
-                        RemotePatcher.DiscEBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, "anonymous", "");
+                        RemotePatcher.DiscEBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, this.ftpUser.Text, this.ftpPass.Text);
                     }
                     else
                     {
-                        RemotePatcher.PSNEBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, "anonymous", "");
+                        RemotePatcher.PSNEBOOTRemotePatch(this.ps3LocalIP.Text, this.lbpGameID.Text, this.serverUrl.Text, this.ftpUser.Text, this.ftpPass.Text);
                     }
                 }
                 catch (Exception e)
