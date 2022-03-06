@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.6.0" />
+    <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -13,22 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="scetool\linux64\oscetool">
+    <None Update="scetool\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="scetool\linux64\scetool">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="scetool\win64\oscetool.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="scetool\win64\scetool.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="scetool\win64\zlib1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="zlib1.dll">
+    <None Update="data\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
