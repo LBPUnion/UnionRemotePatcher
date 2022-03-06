@@ -42,7 +42,7 @@ public class RemotePatch
 
         return users;
     }
-
+    
     public static void LaunchSCETool(string args)
     {
         string platformExecutable = "";
@@ -76,7 +76,28 @@ public class RemotePatch
             throw new Exception("Error starting SCETool. Your platform may not be supported yet.");
         }
     }
-    
+
+    public void RevertEBOOT(string ps3ip, string gameID, string serverURL, string user, string pass)
+    {
+        Console.WriteLine("Restoring original EBOOT.BIN from EBOOT.BIN.BAK");
+        
+        // Create a simple directory structure
+        Directory.CreateDirectory(@"eboot");
+        Directory.CreateDirectory($@"eboot/{gameID}");
+        Directory.CreateDirectory($@"eboot/{gameID}/original");
+        
+        // Now we'll check and see if a backup exists on the server, if so download it and then upload it back as EBOOT.BIN
+        if (FTPHelper.FTP_CheckFileExists($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", user, pass))
+        {
+            FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN.BAK", @$"eboot/{gameID}/original/EBOOT.BIN.BAK", user, pass);
+            FTPHelper.FTP_Upload(@$"eboot/{gameID}/original/EBOOT.BIN.BAK", $"ftp://{ps3ip}/dev_hdd0/game/{gameID}/USRDIR/EBOOT.BIN", user, pass);
+        }
+        else
+        {
+            throw new WebException("Could not find EBOOT.BIN.BAK on server.");
+        }
+    }
+
     public void PSNEBOOTRemotePatch(string ps3ip, string gameID, string serverURL, string user, string pass)
     {
         Console.WriteLine("Detected Digital Copy - Running in Full Mode");
@@ -140,7 +161,7 @@ public class RemotePatch
         // Now, patch the EBOOT;
         Patcher.PatchFile($"eboot/{gameID}/original/EBOOT.ELF", serverURL, $"eboot/{gameID}/patched/EBOOT.ELF");
 
-        // Encrypt the EBOOT
+        // Encrypt the EBOOT (PSN)
         LaunchSCETool($"--verbose " +
                       $"--sce-type=SELF" +
                       $" --skip-sections=FALSE" +
@@ -196,7 +217,7 @@ public class RemotePatch
         // Now, patch the EBOOT;
         Patcher.PatchFile($"eboot/{gameID}/original/EBOOT.ELF", serverURL, $"eboot/{gameID}/patched/EBOOT.ELF");
 
-        // Encrypt the EBOOT
+        // Encrypt the EBOOT (Disc)
         LaunchSCETool(
             $" -v --sce-type=SELF --skip-sections=FALSE --key-revision=0A --self-app-version=0001000000000000 --self-auth-id=1010000001000003 --self-vendor-id=01000002 --self-ctrl-flags=0000000000000000000000000000000000000000000000000000000000000000 --self-cap-flags=00000000000000000000000000000000000000000000003B0000000100040000 --self-type=APP --self-fw-version=0003005500000000 --compress-data true --encrypt \"{Path.GetFullPath(@$"eboot/{gameID}/patched/EBOOT.ELF")}\" \"{Path.GetFullPath(@$"eboot/{gameID}/patched/EBOOT.BIN")}\"");
 

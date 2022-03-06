@@ -74,25 +74,25 @@ namespace UnionRemotePatcher
             control.Click += delegate {
                 if (string.IsNullOrEmpty(this.ps3LocalIP.Text))
                 {
-                    this.CreateOkDialog("Form Error", "No PS3 IP address specified!").ShowModal();
+                    this.CreateOkDialog("Error", "No PS3 IP address specified!").ShowModal();
                     return;
                 }
 
                 if (string.IsNullOrEmpty(this.lbpGameID.Text))
                 {
-                    this.CreateOkDialog("Form Error", "No game ID specified!").ShowModal();
+                    this.CreateOkDialog("Error", "No game ID specified!").ShowModal();
                     return;
                 }
 
                 if (string.IsNullOrEmpty(this.serverUrl.Text))
                 {
-                    this.CreateOkDialog("Form Error", "No server URL specified!").ShowModal();
+                    this.CreateOkDialog("Error", "No server URL specified!").ShowModal();
                     return;
                 }
                 
                 if (!Uri.TryCreate(this.serverUrl.Text, UriKind.Absolute, out _))
                 {
-                    this.CreateOkDialog("Form Error", "Server URL is invalid! Please enter a valid URL.").ShowModal();
+                    this.CreateOkDialog("Error", "Server URL is invalid! Please enter a valid URL.").ShowModal();
                     return;
                 }
 
@@ -114,6 +114,44 @@ namespace UnionRemotePatcher
                 }
 
                 this.CreateOkDialog("Success!", $"The Server URL for {this.lbpGameID.Text} on the PS3 at {this.ps3LocalIP.Text} has been patched to {this.serverUrl.Text}").ShowModal();
+            };
+
+            return control;
+        }
+        
+        public Control CreateRevertEBOOTButton(int tabIndex = 0)
+        {
+            Button control = new()
+            {
+                Text = "Revert EBOOT",
+                TabIndex = tabIndex,
+                Width = 200,
+            };
+
+            control.Click += delegate {
+                if (string.IsNullOrEmpty(this.ps3LocalIP.Text))
+                {
+                    this.CreateOkDialog("Form Error", "No PS3 IP address specified!").ShowModal();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(this.lbpGameID.Text))
+                {
+                    this.CreateOkDialog("Form Error", "No game ID specified!").ShowModal();
+                    return;
+                }
+                
+                try
+                {
+                    RemotePatcher.RevertEBOOT(ps3LocalIP.Text, lbpGameID.Text, serverUrl.Text, ftpUser.Text, ftpPass.Text);
+                }
+                catch (Exception e)
+                {
+                    this.CreateOkDialog("Error occurred while reverting EBOOT", "An error occured while patching:\n" + e).ShowModal();
+                    return;
+                }
+
+                this.CreateOkDialog("Success!", $"UnionRemotePatcher reverted your the EBOOT for {lbpGameID.Text} to stock. You're ready to patch your EBOOT again.").ShowModal();
             };
 
             return control;
@@ -170,9 +208,11 @@ namespace UnionRemotePatcher
                         new TableCell(this.ftpPass = new TextBox { TabIndex = 4 })
                     ),
                     new TableRow(
-                        new TableCell(this.CreateHelpButton(6)),
+                        new TableCell(this.CreateHelpButton(5)),
                         new TableRow(
-                            new TableCell(this.CreatePatchButton(5)))
+                            new TableCell(this.CreatePatchButton(6)),
+                            new TableCell(this.CreateRevertEBOOTButton(7))
+                        )
                     ),
                 },
             };
