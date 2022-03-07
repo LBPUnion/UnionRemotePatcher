@@ -6,13 +6,13 @@
     <ApplicationIcon>Icon64.ico</ApplicationIcon>
     <StartupObject />
   </PropertyGroup>
-
+	
   <ItemGroup>
-    <ProjectReference Include="..\UnionRemotePatcher\UnionRemotePatcher.csproj" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.6.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Eto.Platform.Gtk" Version="2.6.0" />
+    <ProjectReference Include="..\UnionRemotePatcher\UnionRemotePatcher.csproj" />
   </ItemGroup>
 	
 </Project>
