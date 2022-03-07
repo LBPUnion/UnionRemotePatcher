@@ -2,7 +2,7 @@
  Patch LittleBigPlanet EBOOT files on your PS3 system remotely. This is currently a seperate app from UnionPatcher, as it's far enough out of UnionPatcher's scope that I didn't want to dilute the project with it and potentially compromise reliability/compatibility with other systems (namely Vita).
 
 ## THIS SOFTWARE IS CURRENTLY IN TESTING!
-Things can go wrong. 
+Things can go wrong. We hold absolutely no liability or responsibility for any damages you may incur through the use of this software.
 
 ## What is it?
 UnionRemotePatcher is a simple multiplatform app built in Eto that utilizes UnionPatcher and SCETool to remotely backup and patch your LittleBigPlanet EBOOT file over the network for connecting to Project Lighthouse servers. We're aiming to make this process as simple as possible, so let us know what your experience is like.
