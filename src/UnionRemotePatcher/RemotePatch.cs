@@ -139,17 +139,19 @@ public class RemotePatch
         {
             if (FTPHelper.FTP_CheckFileExists($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata", user, pass))
             {
-                FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/act.dat", @"data/act.dat",
-                    user,
-                    pass);
-
                 foreach (string fileName in FTPHelper.FTP_ListDirectory(
                              $"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/", user, pass))
                     if (fileName.Contains(gameID))
                     {
+                        FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/act.dat", @"data/act.dat",
+                            user,
+                            pass);
+                        
                         FTPHelper.FTP_Download($"ftp://{ps3ip}/dev_hdd0/home/{currentUser}/exdata/{fileName}",
                             @$"rifs/{fileName}", user, pass);
+                        
                         contentID = fileName.Substring(0, fileName.Length - 4);
+                        
                         Console.WriteLine($"Got content ID {contentID}");
                     }
             }
