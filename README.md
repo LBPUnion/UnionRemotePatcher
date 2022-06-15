@@ -1,3 +1,6 @@
+# DEPRECATED AND ARCHIVED, NO SUPPORT!
+Please use UnionPatcher instead: https://github.com/LBPUnion/UnionPatcher
+
 # UnionRemotePatcher
  Patch LittleBigPlanet EBOOT files on your PS3 system remotely. This is currently a seperate app from UnionPatcher, as it's far enough out of UnionPatcher's scope that I didn't want to dilute the project with it and potentially compromise reliability/compatibility with other systems (namely Vita).
 
